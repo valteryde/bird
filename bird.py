@@ -30,7 +30,6 @@ import sys
 import time
 import random
 import os
-import system
 
 
 # *** const ***
