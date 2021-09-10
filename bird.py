@@ -38,7 +38,7 @@ PID = os.getpid()
 TEMPLATE_OPEN = '{python}'
 TEMPLATE_CLOSE = '{end}'
 CHARS = 'abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZLÆØÅ_.,123456789()=?$-@^'
-JS_SCRIPT = '<script type="text/javascript">const change = page => {pywebview.api.change(page)}</script>'
+JS_SCRIPT = '<script type="text/javascript">const change = page => {pywebview.api.change(page)};const pylog = (...msg) => {pywebview.api.pylog(...msg)}</script>'
 CSS = 'html,body {overflow: hidden;} \n *::-webkit-scrollbar {display: none;}'
 
 LANDING = '''
@@ -154,6 +154,10 @@ class Api:
 
         #return 'Skifter til -> {}'.format(page)
 
+    def pylog(self, *msg):
+        print('[JS]',*msg)
+
+
 
 # *** main class ***
 class Bird:
@@ -193,7 +197,6 @@ class Bird:
     def _on_closing_(self):
         os.kill(PID, 9) #bruteforce
         #webview.windows[0].destroy()
-
 
 
     def run(self, api=Api(), debug=False, **kwargs):
