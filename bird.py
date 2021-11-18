@@ -31,6 +31,18 @@ import time
 import random
 import os
 import platform
+import flask
+from _thread import start_new_thread
+import logging
+import click
+
+# disable flask logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+def _f(*args, **kwargs):
+    pass
+click.echo = _f
+click.secho = _f
 
 
 # *** const ***
@@ -46,30 +58,32 @@ LANDING = '''
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
     </style>
-
-
   </head>
   <body>
-
     <img style="position:absolute;top:35%;left:50%;transform:translateX(-50%);height:80px;opacity:.4" src="https://icons.iconarchive.com/icons/iconsmind/outline/128/Bird-icon.png" alt="">
     <h1 style="color:rgb(50,50,50);text-align: center;font-family: 'Roboto', sans-serif;position:absolute;left:50%;top:35%;transform:translateX(-50%)">
-
     {python}
-
     l = ['This dosent seem right...', 'Maybe something should have happended?', 'Nobody expects the spanish inquisition!', 'Have you made an "index" view?']
     echo(l[random.randint(0,len(l)-1)])
-
     {end}
-
     </h1>
-
   </body>
 </html>
 '''
+
+# *** static server ***
+class StaticServer:
+
+    def run(self):
+        self.server = flask.Flask('static file server')
+        self.server.run()
+
+    def __init__(self):
+        start_new_thread(self.run, ())
+
 
 
 # *** styles(zzzz) ***
