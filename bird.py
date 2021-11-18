@@ -85,7 +85,6 @@ class StaticServer:
         start_new_thread(self.run, ())
 
 
-
 # *** styles(zzzz) ***
 def get_style(path):
     return CSS + open(path, 'r', encoding='utf-8').read()
@@ -99,6 +98,11 @@ def echo(msg):
 
 def init():
     html_msg_holder.append(JS_SCRIPT)
+
+def url_for(path):
+    html_msg_holder.append('http://localhost:5000/static/'+path)
+
+
 
 
 # *** htmlpage loader and opener ***
