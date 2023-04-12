@@ -83,7 +83,7 @@ setInterval(()=>{
     let promise = fetch(_url_).then(r=>{
         text = r.text().then(text=>{
             if (r.status == 200) {
-                eval(text); //grosly insecure
+                eval(text); //no good
             }
         })
     });
@@ -113,11 +113,12 @@ _sts_ = None
 class Server:
 
     def __run__(self):
-        self.server.run(port=5005)
+        self.server.run(port=self.port)
 
     def __init__(self, folder='static'):
         global _sts_
         _sts_ = self
+        self.port = 5005
         self.folder = folder
         self.server = flask.Flask('static file server', static_folder=self.folder)
 
@@ -128,7 +129,6 @@ class Server:
 # *** styles(zzzz) ***
 def get_style(path):
     return CSS + open(path, 'r', encoding='utf-8').read()
-
 
 
 # *** template function
@@ -142,7 +142,7 @@ def init():
         html_msg_holder.append(JS_SCRIPT.replace('<insertion>',js_custom_funcs))
 
 def url_for(path, ret=False):
-    s = 'http://localhost:5005/{}/{}'.format(_sts_.folder,path)
+    s = 'http://localhost:{}/{}/{}'.format(_sts_.port, _sts_.folder, path)
     if ret:
         return s
     html_msg_holder.append(s)
@@ -281,7 +281,7 @@ class WebviewBird:
         #webview.windows[0].destroy()
 
 
-    def run(self, api=WebviewBaseApi(), debug=False, **kwargs):
+    def run(self, api=WebviewBaseApi(), debug=False, static='static', **kwargs):
 
         gui = None
         if platform.system().lower() == 'windows':
@@ -293,10 +293,10 @@ class WebviewBird:
             def index():
                 return render_html(html=LANDING)
 
-
         api.bird = self
         window = webview.create_window(self.title, js_api=api, html='', **kwargs)
         window.closing += self._on_closing_
+        Server(static).run()
         webview.start(self._preload_, window, debug=debug, gui=gui) #cef
 
 
@@ -364,7 +364,7 @@ class BrowerBird:
         
         self.routes[routingFunction.__name__] = inner
 
-    def run(self, api=BrowserBaseAPI(), debug=None, *args, **kwargs):
+    def run(self, api=BrowserBaseAPI(), debug=None, static='static', *args, **kwargs):
         global browser_connection
 
         self.app = flask.Flask('bird')
@@ -389,6 +389,7 @@ class BrowerBird:
                     js += i+'(...args)'+'{return this.send("'+ i +'", ...args);}\n'
         browser_connection = browser_connection.replace('<functions>', js)
 
+        Server(static).run()
         #self.app.run('0.0.0.0')
         self.app.run()
 
