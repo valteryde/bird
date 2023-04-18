@@ -163,11 +163,14 @@ def render_html(path=None, html=None, **kwargs):
     #res = '' #empty string to attatch "good" and correct html
 
     for key in kwargs:
-        if type(kwargs[key]) is str:
-            kwargs[key] = kwargs[key].replace('"', "'")
-            exec(key + '= "' + str(kwargs[key]) + '"')
-        else:
-            exec(key + '=' + str(kwargs[key]))
+        exec(key + '=  kwargs["{}"]'.format(key))
+
+    # for key in kwargs:
+    #     if type(kwargs[key]) is str:
+    #         kwargs[key] = kwargs[key].replace('"', "'")
+    #         exec(key + '= "' + str(kwargs[key]) + '"')
+    #     else:
+    #         exec(key + '=' + str(kwargs[key]))
 
     while TEMPLATE_OPEN in html:
         open_index = html.index(TEMPLATE_OPEN)
